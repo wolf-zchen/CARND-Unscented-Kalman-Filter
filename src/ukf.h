@@ -57,10 +57,13 @@ public:
 
   ///* Weights of sigma points
   VectorXd weights_;
-  
+
   ///* Noise matrices
   MatrixXd R_radar;
-  MatrixXd R_laser;  
+  MatrixXd R_laser;
+
+  //EKF
+  MatrixXd H_laser_;
 
   ///* State dimension
   int n_x_;
@@ -75,7 +78,7 @@ public:
   double NIS_radar_;
 
   ///* the current NIS for laser
-  double NIS_laser_;  
+  double NIS_laser_;
 
   /**
    * Constructor
