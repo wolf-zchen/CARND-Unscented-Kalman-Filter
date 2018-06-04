@@ -29,7 +29,7 @@ public:
   MatrixXd P_;
 
   //create augmented tate convariance
-  MatrixXd P_aug_
+  MatrixXd P_aug_;
 
   ///* predicted sigma points matrix
   MatrixXd Xsig_pred_;
