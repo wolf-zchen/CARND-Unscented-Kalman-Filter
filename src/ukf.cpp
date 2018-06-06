@@ -20,13 +20,14 @@ UKF::UKF() {
 
   // initial state vector
   x_ = VectorXd(5);
+  x_.fill(0.0);
 
   // initial covariance matrix
   P_ = MatrixXd(5, 5);
   P_.setIdentity();
 
   // Process noise standard deviation longitudinal acceleration in m/s^2
-  std_a_ = 2.5;
+  std_a_ = 1.0;
 
   // Process noise standard deviation yaw acceleration in rad/s^2
   std_yawdd_ = 0.8;
@@ -53,6 +54,8 @@ UKF::UKF() {
  Complete the initialization. See ukf.h for other member properties.
   Hint: one or more values initialized above might be wildly off...
   */
+  is_initialized_ = false;
+
   //State dimension
   n_x_ = 5;
 
@@ -220,8 +223,8 @@ void UKF::Prediction(double delta_t) {
     double px_p, py_p;
 
     //avoid division by zero
-    //avoid division by zero
-    if (fabs(yawd) > 0.001) {
+    const int check_zero = 0.001;
+    if (fabs(yawd) > check_zero) {
         px_p = p_x + v/yawd * ( sin (yaw + yawd*delta_t) - sin(yaw));
         py_p = p_y + v/yawd * ( cos(yaw) - cos(yaw+yawd*delta_t) );
     }
@@ -339,7 +342,13 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
     // measurement model
     Zsig_(0, i) = sqrt(p_x*p_x + p_y*p_y);                        //r
-    Zsig_(1, i) = atan2(p_y, p_x);                                 //phi
+    if ((p_x = 0.0) && (p_y = 0.0)) {
+      // handle atan2(0,0)
+      Zsig_(1, i) = 0;
+    }
+    else{
+      Zsig_(1, i) = atan2(p_y, p_x);
+    }                                 //phi
     Zsig_(2, i) = (p_x*v1 + p_y*v2) / sqrt(p_x*p_x + p_y*p_y);   //r_dot
   }
 
